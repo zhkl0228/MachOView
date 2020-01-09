@@ -717,16 +717,18 @@
 					"-DCAPSTONE_HAS_ARM",
 					"-DCAPSTONE_HAS_X86",
 					"-DCAPSTONE_USE_SYS_DYN_MEM",
+					"-stdlib=libc++",
 				);
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__info_plist,
 					Info.plist,
+					"-stdlib=libc++",
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx10.15;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "$(inherited)";
 				VERSIONING_SYSTEM = "";
@@ -772,16 +774,18 @@
 					"-DCAPSTONE_HAS_ARM",
 					"-DCAPSTONE_HAS_X86",
 					"-DCAPSTONE_USE_SYS_DYN_MEM",
+					"-stdlib=libc++",
 				);
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
 					__info_plist,
 					Info.plist,
+					"-stdlib=libc++",
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = "";
 				PRODUCT_NAME = MachOView;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx10.15;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "$(inherited)";
