@@ -76,6 +76,7 @@ using namespace std;
     case LC_DYLIB_CODE_SIGN_DRS:  return @"LC_DYLIB_CODE_SIGN_DRS";
     case LC_LINKER_OPTION:        return @"LC_LINKER_OPTION";
     case LC_LINKER_OPTIMIZATION_HINT: return @"LC_LINKER_OPTIMIZATION_HINT";
+    case LC_BUILD_VERSION: return @"LC_BUILD_VERSION";
   }
 }
 
@@ -847,7 +848,6 @@ using namespace std;
   return node;
 }
 
-  
 //-----------------------------------------------------------------------------
 - (MVNode *)createLCUUIDNode:(MVNode *)parent
                    caption:(NSString *)caption
@@ -887,6 +887,37 @@ using namespace std;
                           [lastReadHex substringWithRange:NSMakeRange(12,4)],
                           [lastReadHex substringWithRange:NSMakeRange(16,4)],
                           [lastReadHex substringWithRange:NSMakeRange(20,12)] ]];
+  return node;
+}
+
+//-----------------------------------------------------------------------------
+- (MVNode *)createBuildVersionCommandNode:(MVNode *)parent
+                   caption:(NSString *)caption
+                  location:(uint32_t)location
+                    build_version_command:(struct build_version_command const *)build_version_command
+{
+  MVNodeSaver nodeSaver;
+  MVNode * node = [parent insertChildWithDetails:caption location:location length:build_version_command->cmdsize saver:nodeSaver];
+  
+  NSRange range = NSMakeRange(location,0);
+  NSString * lastReadHex;
+  
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Command"
+                         :[self getNameForCommand:build_version_command->cmd]];
+  
+  [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],nil];
+
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Command Size"
+                         :[NSString stringWithFormat:@"%u", build_version_command->cmdsize]];
+  
+  [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],
+                              MVUnderlineAttributeName,@"YES",nil];
   return node;
 }
 
@@ -2232,6 +2263,15 @@ using namespace std;
                             caption:caption
                            location:location
                        uuid_command:uuid_command];
+    } break;
+          
+    case LC_BUILD_VERSION:
+    {
+        MATCH_STRUCT(build_version_command,location)
+        node = [self createBuildVersionCommandNode:parent
+                              caption:caption
+                             location:location
+                build_version_command:build_version_command];
     } break;
       
     case LC_THREAD:

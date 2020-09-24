@@ -297,6 +297,7 @@ struct load_command {
 #define	LC_ENCRYPTION_INFO_64 0x2C /* 64-bit encrypted segment information */
 #define LC_LINKER_OPTION 0x2D /* linker options in MH_OBJECT files */
 #define LC_LINKER_OPTIMIZATION_HINT 0x2E /* optimization hints in MH_OBJECT files */
+#define LC_BUILD_VERSION 0x32 /* build for platform min OS version */
 
 
 /*
@@ -1139,6 +1140,21 @@ struct uuid_command {
     uint32_t	cmd;		/* LC_UUID */
     uint32_t	cmdsize;	/* sizeof(struct uuid_command) */
     uint8_t	uuid[16];	/* the 128-bit uuid */
+};
+
+struct build_tool_version {
+  uint32_t tool;      // enum for the tool
+  uint32_t version;   // version of the tool
+};
+
+struct build_version_command {
+  uint32_t cmd;       // LC_BUILD_VERSION
+  uint32_t cmdsize;   // sizeof(struct build_version_command) +
+                      // ntools * sizeof(struct build_tool_version)
+  uint32_t platform;  // platform
+  uint32_t minos;     // X.Y.Z is encoded in nibbles xxxx.yy.zz
+  uint32_t sdk;       // X.Y.Z is encoded in nibbles xxxx.yy.zz
+  uint32_t ntools;    // number of tool entries following this
 };
 
 /*
