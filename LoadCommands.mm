@@ -890,6 +890,36 @@ using namespace std;
   return node;
 }
 
+static NSString *getBuildVersionPlatform(uint32_t platform) {
+    switch (platform) {
+        case 1:
+            return @"macos";
+        case 2:
+            return @"ios";
+        case 3:
+            return @"tvos";
+        case 4:
+            return @"watchos";
+        case 5:
+            return @"bridgeos";
+        default:
+            return @"unknown";
+    }
+}
+
+static NSString *getBuildTool(uint32_t tool) {
+    switch (tool) {
+        case 1:
+            return @"clang";
+        case 2:
+            return @"swift";
+        case 3:
+            return @"ld";
+        default:
+            return @"unknown";
+    }
+}
+
 //-----------------------------------------------------------------------------
 - (MVNode *)createBuildVersionCommandNode:(MVNode *)parent
                    caption:(NSString *)caption
@@ -918,6 +948,53 @@ using namespace std;
   
   [node.details setAttributes:MVCellColorAttributeName,[NSColor greenColor],
                               MVUnderlineAttributeName,@"YES",nil];
+    
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Platform"
+                         :[NSString stringWithFormat:@"%@", getBuildVersionPlatform(build_version_command->platform)]];
+    
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                         :lastReadHex
+                         :@"Min OS Version"
+                         :[NSString stringWithFormat:@"%u.%u.%u",
+                           (build_version_command->minos >> 16),
+                           ((build_version_command->minos >> 8) & 0xff),
+                           (build_version_command->minos & 0xff)]];
+    
+  [dataController read_uint32:range lastReadHex:&lastReadHex];
+  [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                       :lastReadHex
+                       :@"SDK Version"
+                       :[NSString stringWithFormat:@"%u.%u.%u",
+                         (build_version_command->sdk >> 16),
+                         ((build_version_command->sdk >> 8) & 0xff),
+                         (build_version_command->sdk & 0xff)]];
+    
+  [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+    
+  struct build_tool_version *build_tool_version = (struct build_tool_version *) (&build_version_command->ntools + 1);
+  for(uint32_t i = 0; i < build_version_command->ntools; i++) {
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+     :lastReadHex
+     :@"Build Tool"
+     :[NSString stringWithFormat:@"%@", getBuildTool(build_tool_version->tool)]];
+      
+    [dataController read_uint32:range lastReadHex:&lastReadHex];
+    [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+                       :lastReadHex
+                       :@"Build Tool Version"
+                       :[NSString stringWithFormat:@"%u.%u.%u",
+                         (build_tool_version->version >> 16),
+                         ((build_tool_version->version >> 8) & 0xff),
+                         (build_tool_version->version & 0xff)]];
+      
+    build_tool_version++;
+  }
+    
   return node;
 }
 
