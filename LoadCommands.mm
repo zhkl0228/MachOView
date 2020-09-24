@@ -10,6 +10,8 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <mach/i386/_structs.h>
+#include <mach/i386/thread_status.h>
 
 #import "Common.h"
 #import "LoadCommands.h"

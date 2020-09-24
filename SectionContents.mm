@@ -165,7 +165,7 @@ using namespace std;
       } break;
         
       default:
-      case sizeof(long double): 
+//      case sizeof(long double): 
       {
         long double num = *(long double *)[data bytes]; 
         literalStr = [NSString stringWithFormat:@"%.16Lg", num];
