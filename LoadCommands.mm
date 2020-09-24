@@ -973,8 +973,6 @@ static NSString *getBuildTool(uint32_t tool) {
                          ((build_version_command->sdk >> 8) & 0xff),
                          (build_version_command->sdk & 0xff)]];
     
-  [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
-    
   [dataController read_uint32:range lastReadHex:&lastReadHex];
   [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                        :lastReadHex
@@ -983,6 +981,8 @@ static NSString *getBuildTool(uint32_t tool) {
     
   struct build_tool_version *build_tool_version = (struct build_tool_version *) (&build_version_command->ntools + 1);
   for(uint32_t i = 0; i < build_version_command->ntools; i++) {
+    [node.details setAttributes:MVUnderlineAttributeName,@"YES",nil];
+      
     [dataController read_uint32:range lastReadHex:&lastReadHex];
     [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
      :lastReadHex
