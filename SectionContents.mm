@@ -152,20 +152,20 @@ using namespace std;
     NSString * literalStr;
     switch (stride)
     {
-      case sizeof(float): 
+      case 4:
       {
         double num = *(float *)[data bytes];
         literalStr = [NSString stringWithFormat:@"%.16g", num];
       } break;
       
-      case sizeof(double): 
+      case 8:
       {
         double num = *(double *)[data bytes]; 
         literalStr = [NSString stringWithFormat:@"%.16g", num];
       } break;
         
       default:
-      case sizeof(long double): 
+      case 16:
       {
         long double num = *(long double *)[data bytes]; 
         literalStr = [NSString stringWithFormat:@"%.16Lg", num];
